@@ -9,28 +9,63 @@ import Util
 import Logic
 import LogicPrep
 ############### start to set env ################
-WORK_DIR = os.getcwd() + "/"
-PROJECT_NAME = WORK_DIR.split("/")[-2]
 SYSTEM_NM = platform.system()
-
 if SYSTEM_NM == 'Linux':
     # REAL
-    REF_DIR = "../hg38/"
+    WORK_DIR = os.getcwd() + "/"
 else:
     # DEV
-    REF_DIR = "D:/000_WORK/000_reference_path/human/hg38/Splited/"
+    WORK_DIR = "D:/000_WORK/JangHyeWon/20201016/WORK_DIR/"
+PROJECT_NAME = WORK_DIR.split("/")[-2]
 
+INPUT = "input/"
+OUTPUT = "output/"
+ANALYSIS_INFO = "!Substitution analysis_BE analyzer(L=30)_FAH.xlsx"
+
+# trgt idx
+LEN_TRGT_FRNT = 20
+TRGT_IDX = [39, 40]  # if idx == 40 ==> [39, 40]
+CONDITION_DICT = {
+    'WT': [['A'], False]
+    , 'intended_edit_at_trgt_pnt': [['G'], False]
+    , 'unintended_edit_at_trgt_pnt': [['C', 'T'], False]
+    , 'intended_edit_at_trgt_pnt_other': [['G'], True]
+    , 'other_mod': [['A', 'C', 'T'], True]
+}  # False : no mute, True : mute
+LEN_TRGT_BACK = 20
+
+INIT = [LEN_TRGT_FRNT, TRGT_IDX, LEN_TRGT_BACK]
 
 TOTAL_CPU = mp.cpu_count()
 MULTI_CNT = int(TOTAL_CPU*0.8)
 ############### end setting env #################
 
-def test():
+def main():
     util = Util.Utils()
-    pass
+    logic_prep = LogicPrep.LogicPreps()
+    logic = Logic.Logics()
+
+    sheet_names = util.get_sheet_names(WORK_DIR + INPUT + ANALYSIS_INFO)
+
+    for sheet_name in sheet_names:
+        df = util.read_excel_to_df(WORK_DIR + INPUT + ANALYSIS_INFO, sheet_name)
+        df['Length'] = df['Length'].fillna(0.0)  # Length column is Count value
+        df['Count'] = df['Count'].fillna(0.0)  # Length column is Count value
+        df.fillna('')
+
+        result_dict = logic.analyze_mut(df, INIT, CONDITION_DICT)
+        result_list = logic_prep.make_dict_to_list(result_dict)
+        result_dict.clear()
+
+        header = ['condition', 'RGEN_treated_sequence', '', 'count', 'position_from_target']
+        if len(result_list) > 1000000:
+            util.make_tsv(WORK_DIR + OUTPUT + ANALYSIS_INFO.replace(".xlsx", "_" + sheet_name), header, result_list)
+        else:
+            util.make_excel(WORK_DIR + OUTPUT + ANALYSIS_INFO.replace(".xlsx", "_" + sheet_name), header, result_list)
+
 
 if __name__ == '__main__':
     start_time = time.perf_counter()
     print("start [ " + PROJECT_NAME + " ]>>>>>>>>>>>>>>>>>>")
-    test()
+    main()
     print("::::::::::: %.2f seconds ::::::::::::::" % (time.perf_counter() - start_time))

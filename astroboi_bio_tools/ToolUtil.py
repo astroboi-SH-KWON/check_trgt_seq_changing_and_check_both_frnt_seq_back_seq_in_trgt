@@ -73,8 +73,8 @@ class ToolUtils:
         workbook.save(filename=path + self.ext_xlsx)
         print("end make_excel :", path, "\n")
 
-    def make_csv(self, path, header, data_list, strt_idx=0, deli=','):
-        print("start make_csv :", path)
+    def make_tsv(self, path, header, data_list, strt_idx=0, deli='\t'):
+        print("start make_tsv :", path)
         with open(path, 'w') as f:
             tmp_head = ''
             for head in header[strt_idx:]:
@@ -86,7 +86,7 @@ class ToolUtils:
                 for row_val in data_arr[strt_idx:]:
                     tmp_row += (str(row_val) + deli)
                 f.write(tmp_row[:-1] + "\n")
-        print("end make_csv :", path, "\n")
+        print("end make_tsv :", path, "\n")
 
     """
     :param
