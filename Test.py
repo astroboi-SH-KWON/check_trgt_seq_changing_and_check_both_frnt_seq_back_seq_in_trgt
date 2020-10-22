@@ -69,11 +69,11 @@ def test():
         mut_arr = []
         if '.' in ned_frnt:
             trgt_flag = True
-            logic.check_mute_pos(mut_arr, ned_frnt)
+            logic.check_subs_pos(mut_arr, ned_frnt)
 
         if '.' in ned_back:
             trgt_flag = True
-            logic.check_mute_pos(mut_arr, ned_back, False)
+            logic.check_subs_pos(mut_arr, ned_back, False)
 
         for cndi_key, cndi_val in CONDITION_DICT.items():
             cndi_seq_arr = cndi_val[0]

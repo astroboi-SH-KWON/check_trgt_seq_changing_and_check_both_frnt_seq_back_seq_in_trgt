@@ -11,6 +11,9 @@ class LogicPreps(ToolLogicPreps):
         result_list = []
         for condi, val_dict in data_dict.items():
             for rgen_seq, val_arr in val_dict.items():
-                result_list.append([condi, rgen_seq] + val_arr)
+                if 'INDEL' in condi:
+                    result_list.append(['indel', rgen_seq] + val_arr)
+                else:
+                    result_list.append([condi, rgen_seq] + val_arr)
 
         return result_list
