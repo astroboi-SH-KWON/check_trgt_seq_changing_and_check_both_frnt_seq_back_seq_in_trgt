@@ -20,7 +20,9 @@ PROJECT_NAME = WORK_DIR.split("/")[-2]
 
 INPUT = "input/"
 OUTPUT = "output/"
-ANALYSIS_INFO = "!Substitution analysis_BE analyzer(L=30)_FAH.xlsx"
+# ANALYSIS_INFO = "!Substitution analysis_BE analyzer(L=30)_FAH.xlsx"
+# ANALYSIS_INFO = "Substitution analysis_BE analyzer_201014 ngs.xlsx"  # 20201027 분석요청
+ANALYSIS_INFO = "BE analyzer 분석_201014 ngs_FAH(R=10,n=1,L=30).xlsx"  # 20201118 분석요청
 
 # trgt idx
 LEN_TRGT_FRNT = 20
@@ -35,7 +37,7 @@ CONDITION_DICT = {
     , 'intended_edit_at_trgt_pnt_other_INDEL': [['G'], True, True]
     , 'other_mod': [['A', 'C', 'T'], True, False]
     , 'other_mod_INDEL': [['A', 'C', 'T'], True, True]
-}  # False : no mute, True : mute
+}  # {opt_title: [[trgt_seq], sub_flag, indel_flag]}
 LEN_TRGT_BACK = 20
 
 INIT = [LEN_TRGT_FRNT, TRGT_IDX, LEN_TRGT_BACK]
@@ -64,9 +66,9 @@ def main():
 
         header = ['condition', 'RGEN_treated_sequence', '', 'WT Sequence', 'count', 'subs_position_from_target']
         if len(result_list) > 1000000:
-            util.make_tsv(WORK_DIR + OUTPUT + ANALYSIS_INFO.replace(".xlsx", "_" + sheet_name), header, srted_result_list)
+            util.make_tsv(WORK_DIR + OUTPUT + ANALYSIS_INFO.replace(".xlsx", "_" + sheet_name + "_rm_indel_idx"), header, srted_result_list)
         else:
-            util.make_excel(WORK_DIR + OUTPUT + ANALYSIS_INFO.replace(".xlsx", "_" + sheet_name), header, srted_result_list)
+            util.make_excel(WORK_DIR + OUTPUT + ANALYSIS_INFO.replace(".xlsx", "_" + sheet_name + "_rm_indel_idx"), header, srted_result_list)
         srted_result_list.clear()
 
 

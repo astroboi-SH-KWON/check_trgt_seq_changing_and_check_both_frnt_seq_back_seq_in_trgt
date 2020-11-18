@@ -11,3 +11,19 @@ d	Intended edit at the targeted point, other modified	targeted point가 "G"이�
 e	other modified	targeted point가 "A또는 C또는 T"이면서, 양쪽으로 20bp에 mutation이 있는 경우. 										
 f	Intended edit with indel	targeted point가 "G"이면서, insertion과 deletion이 41bp window내에 있는 경우										
 g	indel	insertion/deletion만 41bp window내에 있는 경우										
+
+
+20201021 수정 조건 
+{opt_title: [[trgt_seq], sub_flag, indel_flag]}
+key인 opt_title에 *_INDEL 있는 것은 추 후에 indel로 모음. 단, *_indel은 제외
+
+
+'WT': [['A'], False, False]
+, 'intended_edit_at_trgt_pnt': [['G'], False, False]
+, 'intended_edit_with_indel': [['G'], False, True]
+, 'unintended_edit_at_trgt_pnt': [['C', 'T'], False, False]
+, 'unintended_edit_at_trgt_pnt_INDEL': [['C', 'T'], False, True]
+, 'intended_edit_at_trgt_pnt_other': [['G'], True, False]
+, 'intended_edit_at_trgt_pnt_other_INDEL': [['G'], True, True]
+, 'other_mod': [['A', 'C', 'T'], True, False]
+, 'other_mod_INDEL': [['A', 'C', 'T'], True, True]

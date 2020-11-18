@@ -3,13 +3,37 @@ from astroboi_bio_tools.ToolLogic import ToolLogics
 
 import LogicPrep
 class Logics(ToolLogics):
-    def check_subs_pos(self, mut_arr, needle_seq, fr_bc_flag=True, subs_checker='.'):
+    # def check_subs_pos(self, mut_arr, needle_seq, fr_bc_flag=True, subs_checker='.'):
+    #     for i in range(len(needle_seq)):
+    #         if needle_seq[i] == subs_checker:
+    #             if fr_bc_flag:
+    #                 mut_arr.append(i - len(needle_seq))
+    #             else:
+    #                 mut_arr.append(i + 1)
+    #
+    #     return mut_arr
+
+    def check_subs_frnt_pos(self, mut_arr, needle_seq, subs_checker='.'):
+        cnt = 0
+        for i in range(len(needle_seq))[::-1]:
+            if needle_seq[i] == ' ':
+                continue
+            elif needle_seq[i] == subs_checker:
+                mut_arr.append(cnt - 1)
+
+            cnt -= 1
+
+        return mut_arr
+
+    def check_subs_back_pos(self, mut_arr, needle_seq, subs_checker='.'):
+        cnt = 0
         for i in range(len(needle_seq)):
-            if needle_seq[i] == subs_checker:
-                if fr_bc_flag:
-                    mut_arr.append(i - len(needle_seq))
-                else:
-                    mut_arr.append(i + 1)
+            if needle_seq[i] == ' ':
+                continue
+            elif needle_seq[i] == subs_checker:
+                mut_arr.append(cnt + 1)
+
+            cnt += 1
 
         return mut_arr
 
@@ -44,11 +68,10 @@ class Logics(ToolLogics):
             subs_arr = []
             if '.' in ned_frnt:
                 trgt_flag = True
-                self.check_subs_pos(subs_arr, ned_frnt)
-
+                self.check_subs_frnt_pos(subs_arr, ned_frnt)
             if '.' in ned_back:
                 trgt_flag = True
-                self.check_subs_pos(subs_arr, ned_back, False)
+                self.check_subs_back_pos(subs_arr, ned_back)
 
             for cndi_key, cndi_val in condi.items():
                 cndi_seq_arr = cndi_val[0]
@@ -62,11 +85,19 @@ class Logics(ToolLogics):
                             sliced_wt_seq = wt_seq[trgt_idx_st - len_trgt_frnt: trgt_idx_en + len_trgt_back]
                             ned_seq = needle_seq[trgt_idx_st - len_trgt_frnt: trgt_idx_en + len_trgt_back]
 
-                            if self.is_indel(seq_key) and indel_flag:
+                            if self.is_indel(seq_key) is False and self.is_indel(
+                                    sliced_wt_seq) is False and indel_flag is False:
+                                # if cndi_key == 'WT':
+                                # print(subs_arr, cndi_key, seq_key, ned_seq, sliced_wt_seq, read_cnt)
+                                self.add_to_dict(result_dict, subs_arr, cndi_key, seq_key, ned_seq, sliced_wt_seq,
+                                                 read_cnt)
+                                break
+                            elif (self.is_indel(seq_key) or self.is_indel(sliced_wt_seq)) and indel_flag:
+                                # print(trgt_seq, 'trgt_seq')
+                                # print(cndi_seq, 'cndi_seq')
+                                # print(cndi_key, '\n', seq_key, '\n', ned_seq, '\n', sliced_wt_seq, read_cnt, '\n')
                                 self.add_to_dict(result_dict, subs_arr, cndi_key, seq_key, ned_seq, sliced_wt_seq, read_cnt)
-
-                            elif self.is_indel(seq_key) == False and indel_flag == False:
-                                self.add_to_dict(result_dict, subs_arr, cndi_key, seq_key, ned_seq, sliced_wt_seq, read_cnt)
+                                break
 
         return result_dict
 
